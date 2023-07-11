@@ -12,16 +12,17 @@ function App() {
     "파이썬독학",
   ]);
   let logo = "HY.BLOG";
-  let [date, setdate] = useState([
-    "7월11일 발행",
+  let [date, setDate] = useState([
+    "7월 11일발행",
     "7월 10일발행",
     "7월 12일발행",
   ]);
   let [따봉, 따봉변경] = useState([0,0,0]);
   let [modal, setModal] = useState([false]);
   let [count, setCount] = useState(1);
+  let [title, setTitle] = useState(0,1,2);
+  let [inputValue, setInputValue] = useState('');
   //state변경 등호금지
-
   return (
     <div className="App">
       <div className="black-nav">
@@ -61,19 +62,6 @@ function App() {
       >
         모달창열기
       </button>
-      {/* <div className="list">
-        <h4>
-          {글제목[0]}
-          <spanonClick={() => {따봉변경(따봉 + 1);}}>👍</span>
-          {따봉}
-        </h4>
-        <p>{date[0]}</p>
-      </div>
-      <div className="list">
-        <h4>{글제목[1]}</h4>
-        <p>{date[1]}</p>
-      </div> */}
-      
       {글제목.map((a,i) => {
         return (
           <div className="list" key={i}>
@@ -81,34 +69,72 @@ function App() {
             setCount(count + 1);
             if (count % 2 == 1) {
               setModal(true);
+              setTitle(i)
+              console.log(title)
             } else {
               setModal(false);
+              setTitle(i)
             }
-          }}>
-              {글제목[i]}
-              <span onClick={() => {
+            
+          }}>{글제목[i]}
+              <span onClick={(e) => {
                 let copy = [...따봉]
                 copy[i] = copy[i] + 1
+                //이벤트버블링막아줌
+                e.stopPropagation();
                 따봉변경(copy);
-                }}>👍</span>
+                }}>👍
+              </span>
               {따봉[i]}
             </h4>
-            <p>{date[i]}</p>
+            <p>{date[i]}발행</p>
+            <button onClick={()=>{
+              let copy = [...글제목];
+              copy.splice(i,1)
+              글제목변경(copy);
+            }}>삭제</button>
           </div>
         );
       })}
-      {modal == true ? <Modal /> : null}
+
+      <input type="text" onChange={(e)=>{
+        //늦게처리돼서 한개만입력해도 입력이안됨 => (비동기처리)
+        //state변경함수는 늦게처리됨
+        setInputValue(e.target.value);
+        }}
+      /> 
+      <button onClick={()=>{
+        if(inputValue == ''){
+          alert('뭘 좀 적으시죠?')
+        }else{
+          //제목에 넣어주면됨
+          let copy = [...글제목];
+          copy.push(inputValue);
+          글제목변경(copy);
+          let copy따봉 = [...따봉];
+          copy따봉.push(0);
+          따봉변경(copy따봉);
+          let copyDate = [...date];
+          let nowDate = new Date().toLocaleTimeString();
+          copyDate.push(nowDate);
+          setDate(copyDate);
+        }
+      }}
+      >입력</button>
+      {
+        modal == true ? <Modal 글제목={글제목} 글제목변경={글제목변경} title={title}/> : null
+      }
     </div>
   );
 }
 //컴포넌트만들기
-const Modal = () => {
+const Modal = (props) => {
   return (
-    //div 두개안됨
     <div className="modal">
-      <h4>제목</h4>
+      <h4>{props.글제목[props.title]}</h4>
       <p>날짜</p>
       <p>상세내용</p>
+      <button>글수정</button>
     </div>
   );
 };
