@@ -1,6 +1,4 @@
-.App {
-  text-align: center;
-}
+
 
 div {
   box-sizing:border-box;
@@ -16,6 +14,10 @@ div {
   width: 100%;
   padding:10px;
   color:white;
+}
+.modal{
+  background: #eee;
+  padding-left:20px;
 }
 
 
